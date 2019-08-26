@@ -204,6 +204,23 @@ namespace Game_Message {
 	bool IsMessageVisible();
 	/** @return true if IsMessagePending() || IsMessageVisible() */
 	bool IsMessageActive();
+
+	// EasyRPG extension allowing more recursive variables \v[\v[...]]
+	static constexpr int easyrpg_default_max_recursion = 8;
+	// RPG_RT only allows 1 level of recursion.
+	static constexpr int rpg_rt_default_max_recursion = 1;
+	// Which one we'll use by default.
+	static constexpr int default_max_recursion = easyrpg_default_max_recursion;
+
+	struct ParseParamResult {
+		int value;
+		const char* iter;
+	};
+
+	ParseParamResult ParseVariable(const char* iter, const char* end, uint32_t escape_char, bool skip_prefix = false, int max_recursion = default_max_recursion);
+	ParseParamResult ParseColor(const char* iter, const char* end, uint32_t escape_char, bool skip_prefix = false, int max_recursion = default_max_recursion);
+	ParseParamResult ParseSpeed(const char* iter, const char* end, uint32_t escape_char, bool skip_prefix = false, int max_recursion = default_max_recursion);
+	ParseParamResult ParseActor(const char* iter, const char* end, uint32_t escape_char, bool skip_prefix = false, int max_recursion = default_max_recursion);
 }
 
 
