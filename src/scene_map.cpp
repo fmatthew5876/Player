@@ -194,12 +194,12 @@ void Scene_Map::DrawBackground() {
 }
 
 void Scene_Map::PreUpdate(MapUpdateAsyncContext& actx) {
-	Game_Map::Update(actx, *message_window, true);
+	Game_Map::Update(actx, true);
 	spriteset->Update();
 }
 
 void Scene_Map::PreUpdateForegroundEvents(MapUpdateAsyncContext& actx) {
-	Game_Map::UpdateForegroundEvents(actx, *message_window);
+	Game_Map::UpdateForegroundEvents(actx);
 	spriteset->Update();
 }
 
@@ -213,7 +213,7 @@ void Scene_Map::Update() {
 }
 
 void Scene_Map::UpdateStage1(MapUpdateAsyncContext actx) {
-	Game_Map::Update(actx, *message_window);
+	Game_Map::Update(actx);
 	spriteset->Update();
 
 	// Waiting for async operation from map update.
