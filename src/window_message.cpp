@@ -89,21 +89,22 @@ void Window_Message::StartMessageProcessing(PendingMessage pm) {
 	}
 
 	text.clear();
-	if (pending_message.IsWordWrapped()) {
-		for (const std::string& line : lines) {
+	for (const std::string& line : lines) {
+		if (pending_message.IsWordWrapped()) {
 			/* TODO: don't take commands like \> \< into account when word-wrapping */
 			Game_Message::WordWrap(
 					line,
 					width - 24,
 					[this](const std::string& wrapped_line) {
-						text.append(wrapped_line).append(1, '\n');
+						text.append(wrapped_line);
 					}
 			);
 		}
-	}
-	else {
-		for (const std::string& line : lines) {
-			text.append(line).append(1, U'\n');
+		else {
+			text.append(line);
+		}
+		if (text.empty() || (text.back() != '\n' && text.back() != '\f')) {
+			text.append(1, '\n');
 		}
 	}
 	item_max = min(4, pending_message.GetNumChoices());
@@ -389,11 +390,6 @@ void Window_Message::UpdateMessage() {
 			// Used by our code to inject form feeds.
 			instant_speed = false;
 
-			auto res = Utils::UTF8Next(text_index, end);
-			const auto next_ch = res.ch;
-			if (next_ch == '\n') {
-				text_index = res.iter;
-			}
 			if (text_index != end) {
 				SetPause(true);
 				new_page_after_pause = true;
