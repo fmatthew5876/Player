@@ -615,4 +615,21 @@ private:
 						 Opacity const& opacity);
 };
 
+inline int Bitmap::GetWidth() const {
+	return width();
+}
+
+inline int Bitmap::GetHeight() const {
+	return height();
+}
+
+inline Rect Bitmap::GetRect() const {
+	return Rect(0, 0, width(), height());
+}
+
+inline bool Bitmap::GetTransparent() const {
+	return format.alpha_type != PF::NoAlpha;
+}
+
+
 #endif
