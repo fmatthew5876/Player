@@ -332,7 +332,8 @@ void Bitmap::TextDraw(Rect const& rect, int color, std::string const& text, Text
 }
 
 void Bitmap::TextDraw(int x, int y, int color, std::string const& text, Text::Alignment align) {
-	Text::Draw(*this, x, y, color, Font::Default(), text, align);
+	auto system = Cache::SystemOrBlack();
+	Text::Draw(*this, x, y, *Font::Default(), *system, color, text, align);
 }
 
 void Bitmap::TextDraw(Rect const& rect, Color color, std::string const& text, Text::Alignment align) {
@@ -355,7 +356,8 @@ void Bitmap::TextDraw(Rect const& rect, Color color, std::string const& text, Te
 }
 
 void Bitmap::TextDraw(int x, int y, Color color, std::string const& text) {
-	Text::Draw(*this, x, y, color, Font::Default(), text);
+	auto system = Cache::SystemOrBlack();
+	Text::Draw(*this, x, y, *Font::Default(), color, text);
 }
 
 Rect Bitmap::TransformRectangle(const Transform& xform, const Rect& rect) {

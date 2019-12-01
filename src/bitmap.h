@@ -550,8 +550,6 @@ protected:
 	TileOpacity opacity = Partial;
 	Color bg_color, sh_color;
 
-	friend void Text::Draw(Bitmap& dest, int x, int y, int color, FontRef font, std::string const& text, Text::Alignment align);
-
 #ifdef USE_SDL
 	friend class SdlUi;
 #endif
