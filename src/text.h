@@ -55,6 +55,20 @@ namespace Text {
 	Rect Draw(Bitmap& dest, int x, int y, Font& font, const Bitmap& system, int color, const std::string& text, Text::Alignment align = Text::AlignLeft);
 
 	/**
+	 * Draws the text onto dest bitmap with default font and system.
+	 *
+	 * @param dest the bitmap to render to.
+	 * @param x X offset to render text.
+	 * @param y Y offset to render text.
+	 * @param color which color from the system graphic to use.
+	 * @param text the utf8 / exfont text to render.
+	 * @param align the text alignment to use
+	 *
+	 * @return Rect describing the sub-rect of dest that was rendered to. Does *not* include shadow pixels.
+	 */
+	Rect Draw(Bitmap& dest, int x, int y, int color, const std::string& text, Text::Alignment align = Text::AlignLeft);
+
+	/**
 	 * Draws the text onto dest bitmap with given parameters. Does not draw a shadow.
 	 *
 	 * @param dest the bitmap to render to.

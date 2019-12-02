@@ -87,6 +87,14 @@ Rect Text::Draw(Bitmap& dest, const int x, const int y, Font& font, const Bitmap
 	return { x, y, next_glyph_pos, ih };
 }
 
+Rect Text::Draw(Bitmap& dest, int x, int y, int color, const std::string& text, Text::Alignment align) {
+	auto font = Font::Default();
+	assert(font);
+	auto system = Cache::SystemOrBlack();
+	assert(system);
+	return Draw(dest, x, y, *font, *system, color, text, align);
+}
+
 Rect Text::Draw(Bitmap& dest, const int x, const int y, Font& font, const Color color, const std::string& text) {
 	if (text.length() == 0) return { x, y, 0, 0 };
 
