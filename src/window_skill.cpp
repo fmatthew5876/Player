@@ -25,9 +25,11 @@
 #include "game_temp.h"
 #include "bitmap.h"
 #include "font.h"
+#include "cache.h"
 #include "player.h"
 #include "output.h"
 #include "reader_util.h"
+#include "text.h"
 
 Window_Skill::Window_Skill(int ix, int iy, int iwidth, int iheight) :
 	Window_Selectable(ix, iy, iwidth, iheight), actor_id(-1), subset(0) {
@@ -77,6 +79,9 @@ void Window_Skill::DrawItem(int index) {
 
 	int skill_id = data[index];
 
+	auto system = Cache::SystemOrBlack();
+	auto font = Font::Default();
+
 	if (skill_id > 0) {
 		const Game_Actor* actor = Game_Actors::GetActor(actor_id);
 		int costs = actor->CalculateSkillCost(skill_id);
@@ -84,10 +89,8 @@ void Window_Skill::DrawItem(int index) {
 		bool enabled = CheckEnable(skill_id);
 		int color = !enabled ? Font::ColorDisabled : Font::ColorDefault;
 
-		std::stringstream ss;
-		ss << costs;
-		contents->TextDraw(rect.x + rect.width - 28, rect.y, color, "-");
-		contents->TextDraw(rect.x + rect.width - 6, rect.y, color, ss.str(), Text::AlignRight);
+		Text::Draw(*contents, rect.x + rect.width - 28, rect.y, *font, *system, color, "-");
+		Text::Draw(*contents, rect.x + rect.width - 6, rect.y, *font, *system, color, std::to_string(costs), Text::AlignRight);
 
 		// Skills are guaranteed to be valid
 		DrawSkillName(*ReaderUtil::GetElement(Data::skills, skill_id), rect.x, rect.y, enabled);
