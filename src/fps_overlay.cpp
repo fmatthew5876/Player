@@ -55,6 +55,8 @@ void FpsOverlay::Draw() {
 #endif
 		Player::fps_flag);
 
+	auto font = Font::Default();
+
 	if (fps_draw) {
 		if (fps_dirty) {
 			std::string text = GetFpsString();
@@ -66,7 +68,7 @@ void FpsOverlay::Draw() {
 			}
 			fps_bitmap->Clear();
 			fps_bitmap->Fill(Color(0, 0, 0, 128));
-			fps_bitmap->TextDraw(1, 0, Color(255, 255, 255, 255), text);
+			Text::Draw(*fps_bitmap, 1, 0, *font, Color(255, 255, 255, 255), text);
 
 			fps_rect = Rect(0, 0, rect.width + 1, rect.height - 1);
 
@@ -89,7 +91,7 @@ void FpsOverlay::Draw() {
 			}
 			speedup_bitmap->Clear();
 			speedup_bitmap->Fill(Color(0, 0, 0, 128));
-			speedup_bitmap->TextDraw(1, 0, Color(255, 255, 255, 255), text);
+			Text::Draw(*speedup_bitmap, 1, 0, *font, Color(255, 255, 255, 255), text);
 
 			speedup_rect = Rect(0, 0, rect.width + 1, rect.height - 1);
 
