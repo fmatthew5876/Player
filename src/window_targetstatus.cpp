@@ -21,6 +21,8 @@
 #include "game_party.h"
 #include "bitmap.h"
 #include "font.h"
+#include "cache.h"
+#include "text.h"
 #include "reader_util.h"
 
 Window_TargetStatus::Window_TargetStatus(int ix, int iy, int iwidth, int iheight) :
@@ -36,22 +38,17 @@ void Window_TargetStatus::Refresh() {
 		return;
 	}
 
-	if (use_item) {
-		contents->TextDraw(0, 0, 1, Data::terms.possessed_items);
-	} else {
-		contents->TextDraw(0, 0, 1, Data::terms.sp_cost);
-	}
+	auto font = Font::Default();
+	auto system = Cache::SystemOrBlack();
+
+	Text::Draw(*contents, 0, 0, *font, *system, 1, (use_item ? Data::terms.possessed_items : Data::terms.sp_cost));
 
 	// Scene_ActorTarget validates items and skills
-	std::string str;
-	if (use_item) {
-		str = std::to_string(Main_Data::game_party->GetItemCount(id));
-	} else {
-		str = std::to_string((*Main_Data::game_party)[actor_index].CalculateSkillCost(id));
-	}
+	auto str = use_item
+		? std::to_string(Main_Data::game_party->GetItemCount(id))
+		: std::to_string((*Main_Data::game_party)[actor_index].CalculateSkillCost(id));
 
-	FontRef font = Font::Default();
-	contents->TextDraw(contents->GetWidth() - font->GetSize(str).width, 0, Font::ColorDefault, str, Text::AlignRight);
+	Text::Draw(*contents, contents->GetWidth() - font->GetSize(str).width, 0, *font, *system, Font::ColorDefault, str, Text::AlignRight);
 }
 
 void Window_TargetStatus::SetData(int id, bool is_item, int actor_index) {
