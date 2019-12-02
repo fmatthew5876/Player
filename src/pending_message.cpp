@@ -82,7 +82,7 @@ std::string PendingMessage::ApplyTextInsertingCommands(std::string input, uint32
 	while (iter != end) {
 		auto ret = Utils::UTF8Next(iter, end);
 		if (ret.ch != escape_char) {
-			iter = ret.iter;
+			iter = ret.next;
 			continue;
 		}
 
@@ -94,7 +94,7 @@ std::string PendingMessage::ApplyTextInsertingCommands(std::string input, uint32
 		output.append(start_copy, iter);
 		start_copy = iter;
 
-		iter = ret.iter;
+		iter = ret.next;
 		if (iter == end) {
 			break;
 		}
