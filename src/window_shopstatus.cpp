@@ -22,6 +22,8 @@
 #include "window_shopstatus.h"
 #include "bitmap.h"
 #include "font.h"
+#include "text.h"
+#include "cache.h"
 
 Window_ShopStatus::Window_ShopStatus(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight), item_id(0) {
@@ -42,12 +44,15 @@ void Window_ShopStatus::Refresh() {
 		equipped = Main_Data::game_party->GetEquippedItemCount(item_id);
 	}
 
-	contents->TextDraw(0, 2, 1, Data::terms.possessed_items);
-	contents->TextDraw(0, 18, 1, Data::terms.equipped_items);
+	auto system = Cache::SystemOrBlack();
+	auto font = Font::Default();
 
-	contents->TextDraw(120, 2, Font::ColorDefault, std::to_string(number), Text::AlignRight);
+	Text::Draw(*contents, 0, 2, *font, *system, 1, Data::terms.possessed_items);
+	Text::Draw(*contents, 0, 18, *font, *system, 1, Data::terms.equipped_items);
 
-	contents->TextDraw(120, 18, Font::ColorDefault, std::to_string(equipped), Text::AlignRight);
+	Text::Draw(*contents, 120, 2, *font, *system, Font::ColorDefault, std::to_string(number), Text::AlignRight);
+
+	Text::Draw(*contents, 120, 18, *font, *system, Font::ColorDefault, std::to_string(equipped), Text::AlignRight);
 }
 
 void Window_ShopStatus::SetItemId(int new_item_id) {
