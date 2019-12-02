@@ -22,6 +22,8 @@
 #include "game_party.h"
 #include "bitmap.h"
 #include "font.h"
+#include "cache.h"
+#include "text.h"
 #include "version.h"
 
 Window_About::Window_About(int ix, int iy, int iwidth, int iheight) :
@@ -47,7 +49,10 @@ void Window_About::Refresh() {
 		"Contribute: easyrpg.org/contribute",
 	};
 
+	auto system = Cache::SystemOrBlack();
+	auto font = Font::Default();
+
 	for (size_t i = 0; i < about_msg.size(); ++i) {
-		contents->TextDraw(0, 2 + 14 * i, Font::ColorDefault, about_msg[i]);
+		Text::Draw(*contents, 0, 2 + 14 * i, *font, *system, Font::ColorDefault, about_msg[i]);
 	}
 }

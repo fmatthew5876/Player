@@ -22,6 +22,8 @@
 #include "game_party.h"
 #include "bitmap.h"
 #include "font.h"
+#include "cache.h"
+#include "text.h"
 
 Window_GameList::Window_GameList(int ix, int iy, int iwidth, int iheight) :
 	Window_Selectable(ix, iy, iwidth, iheight) {
@@ -74,10 +76,16 @@ void Window_GameList::DrawItem(int index) {
 		text = game_directories[index];
 	}
 
-	contents->TextDraw(rect.x, rect.y, Font::ColorDefault, game_directories[index]);
+	auto system = Cache::SystemOrBlack();
+	auto font = Font::Default();
+
+	Text::Draw(*contents, rect.x, rect.y, *font, *system, Font::ColorDefault, game_directories[index]);
 }
 
 void Window_GameList::DrawErrorText() {
+	auto system = Cache::SystemOrBlack();
+	auto font = Font::Default();
+
 	std::vector<std::string> error_msg = {
 #ifdef EMSCRIPTEN
 		"Did you type in a wrong URL?",
@@ -98,13 +106,13 @@ void Window_GameList::DrawErrorText() {
 	};
 
 #ifdef EMSCRIPTEN
-	contents->TextDraw(0, 0, Font::ColorKnockout, "The game was not found.");
+	Text::Draw(*contents, 0, 0, *font, *system, Font::ColorKnockout, "The game was not found.");
 #else
-	contents->TextDraw(0, 0, Font::ColorKnockout, "No games found in the current directory.");
+	Text::Draw(*contents, 0, 0, *font, *system,Font::ColorKnockout, "No games found in the current directory.");
 #endif
 
 	for (size_t i = 0; i < error_msg.size(); ++i) {
-		contents->TextDraw(0, 2 + 14 * (i + 2), Font::ColorCritical, error_msg[i]);
+		Text::Draw(*contents, 0, 2 + 14 * (i + 2), *font, *system, Font::ColorCritical, error_msg[i]);
 	}
 }
 
