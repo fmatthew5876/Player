@@ -22,6 +22,8 @@
 #include "window_paramstatus.h"
 #include "bitmap.h"
 #include "font.h"
+#include "cache.h"
+#include "text.h"
 
 Window_ParamStatus::Window_ParamStatus(int ix, int iy, int iwidth, int iheight, int actor_id) :
 	Window_Base(ix, iy, iwidth, iheight),
@@ -36,14 +38,17 @@ Window_ParamStatus::Window_ParamStatus(int ix, int iy, int iwidth, int iheight, 
 void Window_ParamStatus::Refresh() {
 	contents->Clear();
 
+	auto font = Font::Default();
+	auto system = Cache::SystemOrBlack();
+
 	auto* actor = Game_Actors::GetActor(actor_id);
 
-	auto draw = [this](int y, const std::string& name, int value) {
+	auto draw = [&](int y, const std::string& name, int value) {
 		// Draw Term
-		contents->TextDraw(0, y, 1, name);
+		Text::Draw(*contents, 0, y, *font, *system, 1, name);
 
 		// Draw Value
-		contents->TextDraw(90, y, Font::ColorDefault, std::to_string(value), Text::AlignRight);
+		Text::Draw(*contents, 90, y, *font, *system, Font::ColorDefault, std::to_string(value), Text::AlignRight);
 		return y + 16;
 	};
 

@@ -21,6 +21,8 @@
 #include "cache.h"
 #include "bitmap.h"
 #include "input.h"
+#include "font.h"
+#include "cache.h"
 #include "game_system.h"
 #include "game_temp.h"
 #include "window_battleoption.h"
@@ -91,27 +93,29 @@ void Window_BattleOption::UpdateCursorRect() {
 void Window_BattleOption::Refresh() {
 	contents->Clear();
 
-	Font::SystemColor color = Font::ColorDefault;
+	auto font = Font::Default();
+	auto system = Cache::SystemOrBlack();
+	auto color = Font::ColorDefault;
 
-	DrawItem(0, color);
+	DrawItem(0, *font, *system, color);
 	color = Game_Temp::battle_defeat_mode == 0 ? Font::ColorDisabled : Font::ColorDefault;
-	DrawItem(1, color);
+	DrawItem(1, *font, *system, color);
 	color = Game_Temp::battle_escape_mode == 0 ? Font::ColorDisabled : Font::ColorDefault;
-	DrawItem(2, color);
+	DrawItem(2, *font, *system, color);
 	/*for (int i = 0; i < (int) commands.size(); i++) {
 		Font::SystemColor color = (i == 2 && Game_Temp::battle_escape_mode == 0)
 			? Font::ColorDisabled
 			: Font::ColorDefault;
-		DrawItem(i, color);
+		DrawItem(i, *font, *system, color);
 	}*/
 }
 
-void Window_BattleOption::DrawItem(int index, Font::SystemColor color) {
+void Window_BattleOption::DrawItem(int index, Font& font, const Bitmap& system, Font::SystemColor color) {
 	int y = 16 * (index - top_row);
 	if (y < 0 || y + 16 > contents->GetHeight())
 		return;
 	contents->ClearRect(Rect(0, y, contents->GetWidth(), 16));
-	contents->TextDraw(2, y + 2, color, commands[index]);
+	Text::Draw(*contents, 2, y + 2, font, system, color, commands[index]);
 }
 
 int Window_BattleOption::GetIndex() {

@@ -23,6 +23,8 @@
 #include "input.h"
 #include "bitmap.h"
 #include "font.h"
+#include "cache.h"
+#include "text.h"
 
 const char* const Window_Keyboard::DONE = "<Done>";
 const char* const Window_Keyboard::SPACE = "SPACE";
@@ -256,10 +258,13 @@ void Window_Keyboard::UpdateCursorRect() {
 void Window_Keyboard::Refresh() {
 	contents->Clear();
 
+	auto font = Font::Default();
+	auto system = Cache::SystemOrBlack();
+
 	for (int j = 0; j < row_max; j++) {
 		for (int i = 0; i < col_max; i++) {
 			Rect r = GetItemRect(j, i);
-			contents->TextDraw(r.x + 4, r.y, Font::ColorDefault, GetKey(j, i));
+			Text::Draw(*contents, r.x + 4, r.y, *font, *system, Font::ColorDefault, GetKey(j, i));
 		}
 	}
 }

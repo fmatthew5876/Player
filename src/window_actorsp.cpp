@@ -19,6 +19,8 @@
 #include "window_actorsp.h"
 #include "bitmap.h"
 #include "font.h"
+#include "cache.h"
+#include "text.h"
 
 Window_ActorSp::Window_ActorSp(int ix, int iy, int iwidth, int iheight) :
 	Window_Base(ix, iy, iwidth, iheight) {
@@ -31,19 +33,22 @@ Window_ActorSp::Window_ActorSp(int ix, int iy, int iwidth, int iheight) :
 void Window_ActorSp::SetBattler(const Game_Battler& battler) {
 	int cx = 0;
 
+	auto font = Font::Default();
+	auto system = Cache::SystemOrBlack();
+
 	int color = Font::ColorDefault;
 	if (battler.GetMaxSp() != 0 && battler.GetSp() <= battler.GetMaxSp() / 4) {
 		color = Font::ColorCritical;
 	}
 
 	// Draw current Sp
-	contents->TextDraw(cx + 3 * 6, 2, color, std::to_string(battler.GetSp()), Text::AlignRight);
+	Text::Draw(*contents, cx + 3 * 6, 2, *font, *system, color, std::to_string(battler.GetSp()), Text::AlignRight);
 
 	// Draw /
 	cx += 3 * 6;
-	contents->TextDraw(cx, 2, Font::ColorDefault, "/");
+	Text::Draw(*contents, cx, 2, *font, *system, Font::ColorDefault, '/', false);
 
 	// Draw Max Sp
 	cx += 6;
-	contents->TextDraw(cx + 3 * 6, 2, Font::ColorDefault, std::to_string(battler.GetMaxSp()), Text::AlignRight);
+	Text::Draw(*contents, cx + 3 * 6, 2, *font, *system, Font::ColorDefault, std::to_string(battler.GetMaxSp()), Text::AlignRight);
 }
