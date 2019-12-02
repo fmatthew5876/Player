@@ -55,7 +55,7 @@ protected:
 	int num_rows;
 	int top_row;
 
-	void DrawItem(int index, Font::SystemColor color);
+	void DrawItem(int index, Font& font, const Bitmap& system, Font::SystemColor color);
 };
 
 #endif
