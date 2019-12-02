@@ -5,6 +5,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
+constexpr char32_t escape = '\\';
 // Correct Tests
 
 struct TestSet {
@@ -85,3 +86,97 @@ TEST_CASE("next") {
 		}
 	}
 }
+
+TEST_CASE("TextNext") {
+	std::string text = u8"H $A$B\\\\\\^\\n\nぽ";
+	const auto* iter = &*text.begin();
+	const auto* end = &*text.end();
+
+	Utils::TextRet ret;
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, 'H');
+	REQUIRE_NE(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE_FALSE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, ' ');
+	REQUIRE_NE(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE_FALSE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, 0);
+	REQUIRE_NE(ret.next, end);
+	REQUIRE(ret.is_exfont);
+	REQUIRE_FALSE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, 1);
+	REQUIRE_NE(ret.next, end);
+	REQUIRE(ret.is_exfont);
+	REQUIRE_FALSE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, '\\');
+	REQUIRE_NE(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, '^');
+	REQUIRE_NE(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, 'n');
+	REQUIRE_NE(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, '\n');
+	REQUIRE_NE(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE_FALSE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, escape);
+	REQUIRE_EQ(ret.ch, U'ぽ');
+	REQUIRE_EQ(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE_FALSE(ret.is_escape);
+	iter = ret.next;
+}
+
+TEST_CASE("TextNextNoEscape") {
+	std::string text = u8"\\$";
+	const auto* iter = &*text.begin();
+	const auto* end = &*text.end();
+
+	Utils::TextRet ret;
+
+	ret = Utils::TextNext(iter, end, 0);
+	REQUIRE_EQ(ret.ch, '\\');
+	REQUIRE_NE(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE_FALSE(ret.is_escape);
+	iter = ret.next;
+
+	ret = Utils::TextNext(iter, end, 0);
+	REQUIRE_EQ(ret.ch, '$');
+	REQUIRE_EQ(ret.next, end);
+	REQUIRE_FALSE(ret.is_exfont);
+	REQUIRE_FALSE(ret.is_escape);
+	iter = ret.next;
+}
+
+
