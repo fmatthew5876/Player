@@ -604,14 +604,35 @@ void Bitmap::Blit(int x, int y, Bitmap const& src, Rect const& src_rect, Opacity
 		pixman_image_unref(mask);
 }
 
-void Bitmap::BlitFast(int x, int y, Bitmap const & src, Rect const & src_rect) {
-	pixman_image_composite32(PIXMAN_OP_SRC,
-		src.bitmap,
-		nullptr, bitmap,
-		src_rect.x, src_rect.y,
-		0, 0,
-		x, y,
-		src_rect.width, src_rect.height);
+void Bitmap::BlitFast(int dst_x, int dst_y, Bitmap const & src_bm, Rect const & src_rect) {
+	uint32_t* dst = static_cast<uint32_t*>(this->pixels());
+	const uint32_t* src = static_cast<const uint32_t*>(src_bm.pixels());
+
+	const auto dst_w = GetWidth();
+	const auto dst_h = GetHeight();
+
+	const auto src_w = src_bm.GetWidth();
+	const auto src_h = src_bm.GetHeight();
+
+	const auto copy_w = std::min(src_rect.width, dst_w - dst_x);
+	const auto copy_h = std::min(src_rect.height, dst_h - dst_y);
+
+	auto* siter = src + src_rect.y * src_w + src_rect.x;
+	auto* diter = dst + dst_y * dst_w + dst_x;
+
+	auto* const send = siter + copy_h * src_w;
+
+	while (siter != send) {
+#if 0
+		std::memcpy(diter, siter, copy_w * sizeof(uint32_t));
+#else
+		for (int j = 0; j < copy_w; ++j) {
+			diter[j] = siter[j];
+		}
+#endif
+		siter += src_w;
+		diter += dst_w;
+	}
 }
 
 pixman_image_t* Bitmap::GetSubimage(Bitmap const& src, const Rect& src_rect) {
