@@ -66,6 +66,18 @@ static void BM_BlitFast(benchmark::State& state) {
 
 BENCHMARK(BM_BlitFast);
 
+static void BM_BlitFastSub(benchmark::State& state) {
+	Bitmap::SetFormat(format_R8G8B8A8_a().format());
+	auto dest = Bitmap::Create(320, 240);
+	auto src = Bitmap::Create(280, 240);
+	auto rect = src->GetRect();
+	for (auto _: state) {
+		dest->BlitFast(0, 0, *src, rect);
+	}
+}
+
+BENCHMARK(BM_BlitFastSub);
+
 static void BM_TiledBlit(benchmark::State& state) {
 	Bitmap::SetFormat(format_R8G8B8A8_a().format());
 	auto dest = Bitmap::Create(320, 240);
