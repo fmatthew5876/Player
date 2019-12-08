@@ -164,7 +164,7 @@ void TilemapLayer::DrawTile(Bitmap& dst, Bitmap& screen, int x, int y, int row, 
 
 	bool use_fast_blit = fast_blit && allow_fast_blit;
 	if (op == Bitmap::Opaque || use_fast_blit) {
-		dst.BlitFast(x, y, screen, rect, 255);
+		dst.BlitFast(x, y, screen, rect);
 	} else {
 		dst.Blit(x, y, screen, rect, 255);
 	}

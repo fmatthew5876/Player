@@ -60,7 +60,7 @@ static void BM_BlitFast(benchmark::State& state) {
 	auto src = Bitmap::Create(320, 240);
 	auto rect = src->GetRect();
 	for (auto _: state) {
-		dest->BlitFast(0, 0, *src, rect, Opacity::opaque);
+		dest->BlitFast(0, 0, *src, rect);
 	}
 }
 

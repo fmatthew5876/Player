@@ -604,10 +604,7 @@ void Bitmap::Blit(int x, int y, Bitmap const& src, Rect const& src_rect, Opacity
 		pixman_image_unref(mask);
 }
 
-void Bitmap::BlitFast(int x, int y, Bitmap const & src, Rect const & src_rect, Opacity const & opacity) {
-	if (opacity.IsTransparent())
-		return;
-
+void Bitmap::BlitFast(int x, int y, Bitmap const & src, Rect const & src_rect) {
 	pixman_image_composite32(PIXMAN_OP_SRC,
 		src.bitmap,
 		nullptr, bitmap,
