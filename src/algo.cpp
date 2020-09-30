@@ -18,10 +18,16 @@
 #include "game_battler.h"
 #include "game_actor.h"
 #include "game_enemy.h"
+#include "game_system.h"
+#include "main_data.h"
+#include "game_player.h"
+#include "game_targets.h"
+#include "game_battle.h"
 #include "attribute.h"
 #include "player.h"
 #include "rand.h"
 #include <lcf/rpg/skill.h>
+#include <lcf/reader_util.h>
 
 #include <algorithm>
 
@@ -249,6 +255,46 @@ int CalcSelfDestructEffect(const Game_Battler& source,
 	}
 
 	return effect;
+}
+
+bool IsSkillUsable(const lcf::rpg::Skill& skill,
+		bool require_states_persist)
+{
+	const auto in_battle = Game_Battle::IsBattleRunning();
+
+	if (skill.type == lcf::rpg::Skill::Type_escape) {
+		return !in_battle && Main_Data::game_system->GetAllowEscape() && Main_Data::game_targets->HasEscapeTarget() && !Main_Data::game_player->IsFlying();
+	}
+
+	if (skill.type == lcf::rpg::Skill::Type_teleport) {
+		return !in_battle && Main_Data::game_system->GetAllowTeleport() && Main_Data::game_targets->HasTeleportTargets() && !Main_Data::game_player->IsFlying();
+	}
+
+	if (skill.type == lcf::rpg::Skill::Type_switch) {
+		return in_battle ? skill.occasion_battle : skill.occasion_field;
+	}
+
+	if (in_battle) {
+		return true;
+	}
+
+	if (skill.affect_hp || skill.affect_sp) {
+		return true;
+	}
+
+	bool affects_state = false;
+	for (int i = 0; i < static_cast<int>(skill.state_effects.size()); ++i) {
+		const bool inflict = skill.state_effects[i];
+		if (inflict) {
+			const auto* state = lcf::ReaderUtil::GetElement(lcf::Data::states, i + 1);
+			if (state && (!require_states_persist || state->type == lcf::rpg::State::Persistence_persists)) {
+				affects_state = true;
+				break;
+			}
+		}
+	}
+
+	return affects_state;
 }
 
 } // namespace Algo
