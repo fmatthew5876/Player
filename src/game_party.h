@@ -150,13 +150,11 @@ public:
 
 	/**
 	 * Gets if item can be used.
-	 * When a target is specified this also checks if the target can use the item.
 	 *
 	 * @param item_id database item ID.
-	 * @param target Target to test
 	 * @return whether the item can be used.
 	 */
-	bool IsItemUsable(int item_id, const Game_Actor* target = nullptr) const;
+	bool IsItemUsable(int item_id) const;
 
 	/**
 	 * Uses an item on an actor.

@@ -56,7 +56,10 @@ bool Window_Item::CheckEnable(int item_id) {
 			&& (!Game_Battle::IsBattleRunning() || !item->occasion_field1)) {
 		return true;
 	}
-	return Main_Data::game_party->IsItemUsable(item_id, actor);
+	if (actor) {
+		return actor->IsItemUsable(item_id);
+	}
+	return Main_Data::game_party->IsItemUsable(item_id);
 }
 
 void Window_Item::Refresh() {

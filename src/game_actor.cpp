@@ -171,10 +171,11 @@ bool Game_Actor::IsItemUsable(int item_id) const {
 
 	// If the actor or class ID is out of range this is an optimization in the ldb file
 	// (all actors or classes missing can equip the item)
-	if (query_set->size() <= (unsigned)(query_idx)) {
-		return true;
+	if (query_set->size() >= (unsigned)(query_idx) && !(*query_set)[query_idx]) {
+		return false;
 	}
-	return (*query_set)[query_idx];
+
+	return Main_Data::game_party->IsItemUsable(item_id);
 }
 
 bool Game_Actor::IsSkillLearned(int skill_id) const {
