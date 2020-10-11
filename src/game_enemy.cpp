@@ -150,3 +150,10 @@ void Game_Enemy::UpdateBattle() {
 	Game_Battler::UpdateBattle();
 }
 
+void Game_Enemy::ResetBattle() {
+	Game_Battler::ResetBattle();
+
+	blink_timer = 0;
+	death_timer = 0;
+	explode_timer = 0;
+}

@@ -46,7 +46,6 @@
 #include "rand.h"
 
 Game_Battler::Game_Battler() {
-	ResetBattle();
 }
 
 bool Game_Battler::HasState(int state_id) const {
