@@ -525,6 +525,7 @@ Game_Party_Base& Game_Battler::GetParty() const {
 void Game_Battler::UpdateBattle() {
 	Shake::Update(shake.position, shake.time_left, shake.strength, shake.speed, false);
 	Flash::Update(flash.current_level, flash.time_left);
+	++frame_counter;
 }
 
 std::vector<int16_t> Game_Battler::BattleStateHeal() {
@@ -566,11 +567,12 @@ void Game_Battler::ResetBattle() {
 	SetHidden(false);
 	SetDirectionFlipped(false);
 	battle_turn = 0;
-	last_battle_action = -1;
 	atk_modifier = 0;
 	def_modifier = 0;
 	spi_modifier = 0;
 	agi_modifier = 0;
+	frame_counter = 0;
+	last_battle_action = -1;
 	battle_combo_command_id = -1;
 	battle_combo_times = -1;
 	attribute_shift.clear();

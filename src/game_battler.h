@@ -756,6 +756,9 @@ public:
 	/** @return current flash color */
 	Color GetFlashColor() const;
 
+	/** @return battle frame counter */
+	int GetBattleFrameCounter() const;
+
 protected:
 	/** Gauge for RPG2k3 Battle */
 	int gauge = 0;
@@ -763,14 +766,15 @@ protected:
 	/** Battle action for next turn */
 	BattleAlgorithmRef battle_algorithm;
 
-	int atk_modifier;
-	int def_modifier;
-	int spi_modifier;
-	int agi_modifier;
-	int battle_turn;
-	int last_battle_action;
-	int battle_combo_command_id;
-	int battle_combo_times;
+	int atk_modifier = 0;
+	int def_modifier = 0;
+	int spi_modifier = 0;
+	int agi_modifier = 0;
+	int battle_turn = 0;
+	int last_battle_action = -1;
+	int battle_combo_command_id = -1;
+	int battle_combo_times = -1;
+	int frame_counter = 0;
 	Point position;
 	bool defending = false;
 	bool charged = false;
@@ -951,6 +955,10 @@ inline bool Game_Battler::IsDirectionFlipped() const {
 
 inline void Game_Battler::SetDirectionFlipped(bool flip) {
 	direction_flipped = flip;
+}
+
+inline int Game_Battler::GetBattleFrameCounter() const {
+	return frame_counter;
 }
 
 #endif
