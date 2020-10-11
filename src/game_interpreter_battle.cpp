@@ -178,6 +178,7 @@ bool Game_Interpreter_Battle::CommandChangeMonsterHP(lcf::rpg::EventCommand cons
 		change = -change;
 
 	enemy.ChangeHp(change, lethal);
+	enemy.SetBlinkTimer();
 
 	if (enemy.IsDead()) {
 		Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_EnemyKill));

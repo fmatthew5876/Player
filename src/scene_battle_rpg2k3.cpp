@@ -1038,12 +1038,15 @@ bool Scene_Battle_Rpg2k3::ProcessBattleAction(Game_BattleAlgorithm::AlgorithmBas
 				action->Execute();
 			}
 
-			Sprite_Battler* target_sprite = Game_Battle::GetSpriteset().FindBattler(action->GetTarget());
+			auto* target = action->GetTarget();
+			Sprite_Battler* target_sprite = Game_Battle::GetSpriteset().FindBattler(target);
 			if (action->IsSuccess() && !action->IsPositive() && target_sprite) {
-				target_sprite->SetAnimationState(Sprite_Battler::AnimationState_Damage, Sprite_Battler::LoopState_DefaultAnimationAfterFinish);
+				if (target->GetType() == Game_Battler::Type_Ally) {
+					target_sprite->SetAnimationState(Sprite_Battler::AnimationState_Damage, Sprite_Battler::LoopState_DefaultAnimationAfterFinish);
+				} else {
+					static_cast<Game_Enemy*>(target)->SetBlinkTimer();
+				}
 			}
-
-			Game_Battler* target = action->GetTarget();
 
 			action->Apply();
 
@@ -1101,21 +1104,20 @@ bool Scene_Battle_Rpg2k3::ProcessBattleAction(Game_BattleAlgorithm::AlgorithmBas
 			return false;
 		}
 
-		{
-			std::vector<Game_Battler*>::const_iterator it;
+		for (auto* target: targets) {
+			auto* target_sprite = Game_Battle::GetSpriteset().FindBattler(target);
 
-			for (it = targets.begin(); it != targets.end(); ++it) {
-				Sprite_Battler* target_sprite = Game_Battle::GetSpriteset().FindBattler(*it);
-
-				if ((*it)->IsDead()) {
-					if (action->GetDeathSe()) {
-						Main_Data::game_system->SePlay(*action->GetDeathSe());
-					}
+			if (target->IsDead()) {
+				if (action->GetDeathSe()) {
+					Main_Data::game_system->SePlay(*action->GetDeathSe());
 				}
-
-				if (target_sprite) {
-					target_sprite->DetectStateChange();
+				if (target->GetType() == Game_Battler::Type_Enemy) {
+					static_cast<Game_Enemy*>(target)->SetDeathTimer();
 				}
+			}
+
+			if (target_sprite) {
+				target_sprite->DetectStateChange();
 			}
 		}
 

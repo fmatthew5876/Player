@@ -603,18 +603,13 @@ bool Scene_Battle_Rpg2k::ProcessActionAnimation(Game_BattleAlgorithm::AlgorithmB
 	}
 
 	if (action->GetSource()->GetType() == Game_Battler::Type_Enemy) {
+		auto* enemy = static_cast<Game_Enemy*>(action->GetSource());
 		if (action->GetType() == Game_BattleAlgorithm::Type::Escape) {
-			auto* source_sprite = Game_Battle::GetSpriteset().FindBattler(action->GetSource());
-			source_sprite->SetAnimationState(
-					Sprite_Battler::AnimationState_Dead,
-					Sprite_Battler::LoopState_DefaultAnimationAfterFinish);
+			enemy->SetDeathTimer();
 		}
 
 		if (action->GetType() == Game_BattleAlgorithm::Type::SelfDestruct) {
-			auto* source_sprite = Game_Battle::GetSpriteset().FindBattler(action->GetSource());
-			source_sprite->SetAnimationState(
-					Sprite_Battler::AnimationState_SelfDestruct,
-					Sprite_Battler::LoopState_DefaultAnimationAfterFinish);
+			enemy->SetExplodeTimer();
 		}
 	}
 
@@ -725,11 +720,12 @@ bool Scene_Battle_Rpg2k::ProcessActionDamage(Game_BattleAlgorithm::AlgorithmBase
 				if (action->GetAffectedHp() > 0) {
 					Main_Data::game_screen->ShakeOnce(3, 5, 8);
 				}
+				if (target_sprite) {
+					target_sprite->SetAnimationState(Sprite_Battler::AnimationState_Damage);
+				}
 			} else {
 				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_EnemyDamage));
-			}
-			if (target_sprite) {
-				target_sprite->SetAnimationState(Sprite_Battler::AnimationState_Damage);
+				static_cast<Game_Enemy*>(target)->SetBlinkTimer();
 			}
 		}
 
@@ -1008,7 +1004,9 @@ bool Scene_Battle_Rpg2k::ProcessActionDeath(Game_BattleAlgorithm::AlgorithmBase*
 		}
 		if (target_sprite) {
 			target_sprite->SetForcedAlive(false);
-			target_sprite->DetectStateChange();
+			if (target->GetType() == Game_Battler::Type_Enemy) {
+				static_cast<Game_Enemy*>(target)->SetDeathTimer();
+			}
 		}
 
 		if (action->IsKilledByDamage()) {
