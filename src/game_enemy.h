@@ -164,6 +164,8 @@ public:
 
 	int GetFlyingOffset() const override;
 
+	bool IsFlying() const;
+
 	void UpdateBattle() override;
 
 	bool IsTransparent() const;
@@ -352,6 +354,10 @@ inline int Game_Enemy::GetDeathTimer() const {
 
 inline void Game_Enemy::SetDeathTimer(int t) {
 	death_timer = t;
+}
+
+inline bool Game_Enemy::IsFlying() const {
+	return enemy->levitate;
 }
 
 #endif
