@@ -85,14 +85,13 @@ void Spriteset_Battle::Update() {
 	background->SetTone(new_tone);
 	background->Update();
 
-	for (auto sprite : sprites) {
-		Game_Battler* battler = sprite->GetBattler();
+	for (auto& sprite : sprites) {
+		const auto* battler = sprite->GetBattler();
 		if (battler->GetType() == Game_Battler::Type_Ally) {
 			sprite->SetVisible(Main_Data::game_party->IsActorInParty(battler->GetId()));
+			static_cast<Sprite_Actor*>(sprite.get())->Update();
 		}
 
-		sprite->Update();
-		sprite->SetTone(new_tone);
 	}
 }
 

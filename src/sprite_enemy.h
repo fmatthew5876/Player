@@ -22,9 +22,9 @@
 #include "sprite_battler.h"
 #include "game_battler.h"
 #include "async_handler.h"
+#include "game_enemy.h"
 
 class BattleAnimation;
-class Game_Enemy;
 
 /**
  * Sprite_Enemy class, used for battle sprites
@@ -56,16 +56,15 @@ public:
 	void ResetZ();
 
 protected:
+	void Draw(Bitmap& dst) override;
 	void OnMonsterSpriteReady(FileRequestResult* result, int hue);
-	void Draw(Bitmap& dst);
 
-	const Game_Enemy* enemy = nullptr;
 	bool forced_alive = false;
 	FileRequestBinding request_id;
 };
 
 inline const Game_Enemy* Sprite_Enemy::GetEnemy() const {
-	return enemy;
+	return static_cast<const Game_Enemy*>(GetBattler());
 }
 
 inline void Sprite_Enemy::SetForcedAlive(bool value) {

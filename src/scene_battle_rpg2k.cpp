@@ -34,6 +34,7 @@
 #include "scene_battle_rpg2k.h"
 #include "scene_battle.h"
 #include "scene_gameover.h"
+#include "sprite_enemy.h"
 #include "output.h"
 #include "rand.h"
 #include "autobattle.h"
@@ -657,10 +658,10 @@ bool Scene_Battle_Rpg2k::ProcessActionApply(Game_BattleAlgorithm::AlgorithmBase*
 
 	// This is a hack to ensure the sprite's death animation doesn't happen
 	// until we actually transition to the death state in the battle system.
-	if (action->IsLethal()) {
+	if (action->IsLethal() && target->GetType() == Game_Battler::Type_Enemy) {
 		auto* target_sprite = Game_Battle::GetSpriteset().FindBattler(target);
 		if (target_sprite) {
-			target_sprite->SetForcedAlive(true);
+			static_cast<Sprite_Enemy*>(target_sprite)->SetForcedAlive(true);
 		}
 	}
 
@@ -947,21 +948,6 @@ bool Scene_Battle_Rpg2k::ProcessActionResults(Game_BattleAlgorithm::AlgorithmBas
 		return ProcessNextAction(BattleActionState_Death, action);
 	}
 
-	// Check if dead enemies get revived to make them visible again
-	if (battle_action_substate == eConditions
-			&& action->IsRevived())
-	{
-		if (action->GetTarget() != nullptr) {
-			auto* target = action->GetTarget();
-			if (target->GetType() == Game_Battler::Type_Enemy) {
-				auto* target_sprite = Game_Battle::GetSpriteset().FindBattler(target);
-				if (target_sprite) {
-					target_sprite->DetectStateChange();
-				}
-			}
-		}
-	}
-
 	// All of the normal states are odd numbers.
 	if ((battle_action_substate & 1) != 0) {
 		battle_message_window->Push(pending_message);
@@ -998,10 +984,10 @@ bool Scene_Battle_Rpg2k::ProcessActionDeath(Game_BattleAlgorithm::AlgorithmBase*
 		if (se) {
 			Main_Data::game_system->SePlay(*se);
 		}
-		if (target_sprite) {
-			target_sprite->SetForcedAlive(false);
-			if (target->GetType() == Game_Battler::Type_Enemy) {
-				static_cast<Game_Enemy*>(target)->SetDeathTimer();
+		if (target->GetType() == Game_Battler::Type_Enemy) {
+			static_cast<Game_Enemy*>(target)->SetDeathTimer();
+			if (target_sprite) {
+				static_cast<Sprite_Enemy*>(target_sprite)->SetForcedAlive(false);
 			}
 		}
 
@@ -1020,11 +1006,9 @@ bool Scene_Battle_Rpg2k::ProcessActionDeath(Game_BattleAlgorithm::AlgorithmBase*
 }
 
 bool Scene_Battle_Rpg2k::ProcessActionFinished(Game_BattleAlgorithm::AlgorithmBase* action) {
-	if (action->GetTarget()) {
-		auto* target_sprite = Game_Battle::GetSpriteset().FindBattler(action->GetTarget());
-		if (target_sprite && !target_sprite->IsIdling()) {
-			return false;
-		}
+	auto* target = action->GetTarget();
+	if (target && target->GetType() == Game_Battler::Type_Enemy && static_cast<Game_Enemy*>(target)->AreTimersActive()) {
+		return false;
 	}
 
 	if (action->TargetNext()) {

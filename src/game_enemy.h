@@ -222,6 +222,9 @@ public:
 	 */
 	void SetDeathTimer(int t = 36);
 
+	/** @return whether any timers active */
+	bool AreTimersActive() const;
+
 protected:
 	const lcf::rpg::Enemy* enemy = nullptr;
 	const lcf::rpg::TroopMember* troop_member = nullptr;
@@ -354,6 +357,10 @@ inline int Game_Enemy::GetDeathTimer() const {
 
 inline void Game_Enemy::SetDeathTimer(int t) {
 	death_timer = t;
+}
+
+inline bool Game_Enemy::AreTimersActive() const {
+	return blink_timer || explode_timer || death_timer;
 }
 
 inline bool Game_Enemy::IsFlying() const {
