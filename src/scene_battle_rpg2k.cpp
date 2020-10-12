@@ -712,16 +712,12 @@ bool Scene_Battle_Rpg2k::ProcessActionDamage(Game_BattleAlgorithm::AlgorithmBase
 	if (battle_action_substate == eProcess) {
 		auto* target = action->GetTarget();
 		assert(target);
-		auto* target_sprite = Game_Battle::GetSpriteset().FindBattler(target);
 
 		if (!action->IsAbsorb()) {
 			if (target->GetType() == Game_Battler::Type_Ally) {
 				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_AllyDamage));
 				if (action->GetAffectedHp() > 0) {
 					Main_Data::game_screen->ShakeOnce(3, 5, 8);
-				}
-				if (target_sprite) {
-					target_sprite->SetAnimationState(Sprite_Battler::AnimationState_Damage);
 				}
 			} else {
 				Main_Data::game_system->SePlay(Main_Data::game_system->GetSystemSE(Main_Data::game_system->SFX_EnemyDamage));
